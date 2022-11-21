@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PokemonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +27,14 @@ class Pokemon
 
     #[ORM\Column]
     private ?int $code = null;
+
+    #[ORM\ManyToMany(targetEntity: Debilidad::class, mappedBy: 'pokemon')]
+    private Collection $debilidades;
+
+    public function __construct()
+    {
+        $this->debilidades = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -75,6 +85,33 @@ class Pokemon
     public function setCode(int $code): self
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Debilidad>
+     */
+    public function getDebilidades(): Collection
+    {
+        return $this->debilidades;
+    }
+
+    public function addDebilidade(Debilidad $debilidade): self
+    {
+        if (!$this->debilidades->contains($debilidade)) {
+            $this->debilidades->add($debilidade);
+            $debilidade->addPokemon($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDebilidade(Debilidad $debilidade): self
+    {
+        if ($this->debilidades->removeElement($debilidade)) {
+            $debilidade->removePokemon($this);
+        }
 
         return $this;
     }
