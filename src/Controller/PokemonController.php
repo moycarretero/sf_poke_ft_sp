@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Debilidad;
 use App\Entity\Pokemon;
 use App\Form\PokemonType;
+use App\Manager\PokemonManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -77,11 +78,17 @@ class PokemonController extends AbstractController {
     }
 
     #[Route('/createPokemon', name: "createPokemon")]
-    public function createPokemon (EntityManagerInterface $doctrine, Request $request) {
+    public function createPokemon (EntityManagerInterface $doctrine, Request $request, PokemonManager $manager) {
         $form = $this -> createForm(PokemonType::class);
         $form -> handleRequest($request);
         if ($form -> isSubmitted() && $form -> isValid()){
             $pokemon = $form -> getData();
+            //Recogemos el fichero img del formulario
+            $imageFile = $form -> get('imageFile') -> getData();
+            if ($imageFile) {
+                $image = $manager -> uploadImage($imageFile, $this->getParameter('kernel.project_dir').'/public/images');
+                $pokemon -> setImage("/images/$image");
+            }
             $doctrine -> persist($pokemon);
             $doctrine -> flush();
             $this -> addFlash("éxito", "Pokemon insertado correctamente");
