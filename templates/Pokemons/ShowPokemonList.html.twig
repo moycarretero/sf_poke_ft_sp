@@ -1,6 +1,9 @@
 {% extends 'Pokemons/BasePokemon.html.twig' %}
     {% block body %}
         <h2>Listado de Pokemons </h2>
+        {% for mensaje in app.flashes("éxito") %}
+            <script> alert("{{mensaje}}")  </script>
+        {% endfor %}
         <div class="row row-cols-1 row-cols-md-2">
             {% for pokemon in pokemonList %}
                 <div class="col mb-4">
@@ -10,6 +13,8 @@
                             <h5 class="card-title">{{pokemon.name}} Nº {{pokemon.code}}</h5>
                             <p class="card-text">{{pokemon.description}}</p>
                             <a href="{{path('getPokemon', {id: pokemon.id})}}" class="btn btn-primary">Más Info</a>
+                            <a href="{{path('editPokemon', {id: pokemon.id})}}" class="btn btn-primary">Editar</a>
+                            <a href="{{path('deletePokemon', {id: pokemon.id})}}" class="btn btn-primary">Eliminar</a>
                         </div>
                     </div>
                 </div>
