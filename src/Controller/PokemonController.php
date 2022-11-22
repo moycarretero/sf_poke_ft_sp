@@ -91,6 +91,8 @@ class PokemonController extends AbstractController {
             }
             $doctrine -> persist($pokemon);
             $doctrine -> flush();
+
+            $manager->sendMail($pokemon->getName());
             $this -> addFlash("éxito", "Pokemon insertado correctamente");
             return $this -> redirectToRoute("getPokemonList");
         }
@@ -123,5 +125,11 @@ class PokemonController extends AbstractController {
         $doctrine -> flush();
         $this -> addFlash("éxito", "Pokemon eliminado correctamente");
         return $this -> redirectToRoute("getPokemonList");
+    }
+
+    #[Route("/react/pokemon")]
+    public function reactPokemon()
+    {
+        return $this->render("Pokemons/reactPoke.html.twig");
     }
 }
